@@ -1,0 +1,19 @@
+:set prompt "> "
+:set -XMultiParamTypeClasses
+:set -XTypeSynonymInstances
+:set -XOverloadedStrings
+:set -XOverloadedLists
+:set -XGeneralizedNewtypeDeriving
+:set -XDeriveDataTypeable
+:set -XDeriveGeneric
+:set -XTypeFamilies
+:set -XTypeApplications
+:set -XTypeOperators
+:set -XPatternSynonyms
+:set -XScopedTypeVariables
+:set -XFlexibleContexts
+:set -XAllowAmbiguousTypes
+:set -XGADTs
+:set -XDataKinds
+:set -XPolyKinds
+:load Alpha.Numerics

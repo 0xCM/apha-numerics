@@ -1,0 +1,137 @@
+name:                alpha-numerics
+version:             0.0.1
+github:              "0xCM/alpha-numerics"
+license:             "MIT"
+author:              "Chris Moore"
+maintainer:          "0xCM00@gmail.com"
+copyright:           "2018 Chris Moore"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+default-extensions:
+  AllowAmbiguousTypes
+  BinaryLiterals
+  BlockArguments
+  ConstraintKinds
+  DefaultSignatures
+  DeriveDataTypeable
+  DeriveFoldable
+  DeriveGeneric
+  DeriveTraversable
+  DuplicateRecordFields
+  FunctionalDependencies
+  FlexibleInstances
+  FlexibleContexts
+  GADTs
+  GeneralizedNewtypeDeriving
+  HexFloatLiterals
+  ImplicitParams
+  InstanceSigs
+  KindSignatures
+  LambdaCase
+  LiberalTypeSynonyms
+  MonadComprehensions
+  MultiParamTypeClasses
+  MultiWayIf
+  NoImplicitPrelude
+  OverloadedLabels
+  OverloadedLists
+  OverloadedStrings
+  ParallelListComp
+  PatternSynonyms
+  PolyKinds
+  QuasiQuotes
+  RankNTypes
+  RecursiveDo
+  RoleAnnotations
+  ScopedTypeVariables
+  StandaloneDeriving
+  TransformListComp
+  TupleSections
+  TypeApplications
+  TypeInType
+  TypeFamilies
+  TypeFamilyDependencies
+  TypeOperators
+  TypeSynonymInstances
+  ViewPatterns
+  UnicodeSyntax
+
+
+dependencies:
+- array
+- base
+- binary
+- bytestring
+- containers
+- deepseq
+- directory
+- filepath
+- ghc
+- ghc-prim
+- ghc-paths
+- mtl
+- parallel
+- parsec
+- process
+- stm
+- text
+- template-haskell
+- transformers
+- time
+
+- adjunctions
+- aeson
+- aeson-pretty
+- ansi-terminal
+- bifunctors
+- comonad
+- contravariant
+- data-default
+- distributive
+- either
+- entropy
+- hashable
+- intervals
+- keys
+- lattices
+- multiset
+- network
+- primitive
+- range
+- semigroupoids
+- semigroups
+- streams
+- tagged
+- unordered-containers
+- vector
+- alpha
+- repa
+- repa-algorithms
+
+library:
+  source-dirs: src
+
+executables:
+  numerics-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - alpha-numerics
+
+tests:
+  numerics-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - alpha-numerics

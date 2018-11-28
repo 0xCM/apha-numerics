@@ -1,0 +1,211 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: b754097c24edd0119e5145a778012d2859201202d552f7df05f9e7fa257b7ee2
+
+name:           alpha-numerics
+version:        0.0.1
+homepage:       https://github.com/0xCM/alpha-numerics#readme
+bug-reports:    https://github.com/0xCM/alpha-numerics/issues
+author:         Chris Moore
+maintainer:     0xCM00@gmail.com
+copyright:      2018 Chris Moore
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/0xCM/alpha-numerics
+
+library
+  exposed-modules:
+      Alpha.Numerics
+      Alpha.Numerics.Base
+      Alpha.Numerics.Base.ErrorFunction
+      Alpha.Numerics.Base.Tolerance
+      Alpha.Numerics.Linear
+      Alpha.Numerics.Linear.Computable
+      Alpha.Numerics.Linear.Structures
+  other-modules:
+      Paths_alpha_numerics
+  hs-source-dirs:
+      src
+  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedLists OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  build-depends:
+      adjunctions
+    , aeson
+    , aeson-pretty
+    , alpha
+    , ansi-terminal
+    , array
+    , base
+    , bifunctors
+    , binary
+    , bytestring
+    , comonad
+    , containers
+    , contravariant
+    , data-default
+    , deepseq
+    , directory
+    , distributive
+    , either
+    , entropy
+    , filepath
+    , ghc
+    , ghc-paths
+    , ghc-prim
+    , hashable
+    , intervals
+    , keys
+    , lattices
+    , mtl
+    , multiset
+    , network
+    , parallel
+    , parsec
+    , primitive
+    , process
+    , range
+    , repa
+    , repa-algorithms
+    , semigroupoids
+    , semigroups
+    , stm
+    , streams
+    , tagged
+    , template-haskell
+    , text
+    , time
+    , transformers
+    , unordered-containers
+    , vector
+  default-language: Haskell2010
+
+executable numerics-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_alpha_numerics
+  hs-source-dirs:
+      app
+  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedLists OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      adjunctions
+    , aeson
+    , aeson-pretty
+    , alpha
+    , alpha-numerics
+    , ansi-terminal
+    , array
+    , base
+    , bifunctors
+    , binary
+    , bytestring
+    , comonad
+    , containers
+    , contravariant
+    , data-default
+    , deepseq
+    , directory
+    , distributive
+    , either
+    , entropy
+    , filepath
+    , ghc
+    , ghc-paths
+    , ghc-prim
+    , hashable
+    , intervals
+    , keys
+    , lattices
+    , mtl
+    , multiset
+    , network
+    , parallel
+    , parsec
+    , primitive
+    , process
+    , range
+    , repa
+    , repa-algorithms
+    , semigroupoids
+    , semigroups
+    , stm
+    , streams
+    , tagged
+    , template-haskell
+    , text
+    , time
+    , transformers
+    , unordered-containers
+    , vector
+  default-language: Haskell2010
+
+test-suite numerics-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_alpha_numerics
+  hs-source-dirs:
+      test
+  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedLists OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      adjunctions
+    , aeson
+    , aeson-pretty
+    , alpha
+    , alpha-numerics
+    , ansi-terminal
+    , array
+    , base
+    , bifunctors
+    , binary
+    , bytestring
+    , comonad
+    , containers
+    , contravariant
+    , data-default
+    , deepseq
+    , directory
+    , distributive
+    , either
+    , entropy
+    , filepath
+    , ghc
+    , ghc-paths
+    , ghc-prim
+    , hashable
+    , intervals
+    , keys
+    , lattices
+    , mtl
+    , multiset
+    , network
+    , parallel
+    , parsec
+    , primitive
+    , process
+    , range
+    , repa
+    , repa-algorithms
+    , semigroupoids
+    , semigroups
+    , stm
+    , streams
+    , tagged
+    , template-haskell
+    , text
+    , time
+    , transformers
+    , unordered-containers
+    , vector
+  default-language: Haskell2010
