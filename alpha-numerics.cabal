@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b754097c24edd0119e5145a778012d2859201202d552f7df05f9e7fa257b7ee2
+-- hash: ca33dd4fbacc627e7479488fcbc1fc4d027c9ac2dd73ba87a699b41e0179f80d
 
 name:           alpha-numerics
 version:        0.0.1
@@ -31,7 +31,7 @@ library
       Alpha.Numerics.Base.ErrorFunction
       Alpha.Numerics.Base.Tolerance
       Alpha.Numerics.Linear
-      Alpha.Numerics.Linear.Computable
+      Alpha.Numerics.Linear.Repa
       Alpha.Numerics.Linear.Structures
   other-modules:
       Paths_alpha_numerics
