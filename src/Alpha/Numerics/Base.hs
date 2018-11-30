@@ -1,3 +1,4 @@
+{-# LANGUAGE NoStarIsType #-}
 module Alpha.Numerics.Base
 (
     module X,
@@ -5,9 +6,11 @@ module Alpha.Numerics.Base
     nat,
     NatPair(..), nat2,
     NatTriple(..), nat3,
-    NatQuad(..), nat4
+    NatQuad(..), nat4,
+    Delayable(..),
+    natmul
 ) where
-import Alpha as X hiding(Matrix,row,col,matrix, vector, covector, Covector, Vector,Any,All, Zippable(..))
+import Alpha as X hiding(Matrix,row,col,matrix, vector, covector, Covector, Vector,Any,All, Zippable(..),natmul,Tabular(..))
 import Alpha.Numerics.Base.ErrorFunction as X
 import Alpha.Numerics.Base.Tolerance as X
 import Data.Vector.Unboxed
@@ -35,3 +38,12 @@ nat3 = (nat @m, nat @n, nat @p)
 nat4::forall m n p q. NatQuad m n p q => (Int,Int,Int,Int)
 nat4 = (nat @m, nat @n, nat @p, nat @q)
 
+natmul::forall m n.(NatPair m n) => Int
+natmul = (nat @m) * (nat @n)
+
+
+class Delayable a where
+    type Delayed a
+
+    delay::a -> Delayed a
+    
