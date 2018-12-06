@@ -24,10 +24,10 @@ class (Numeric a) => Tolerance (n::Nat) a where
     epsilon::a
 
 instance (Numeric a) => Tolerance 0 a where
-    epsilon = zero
+    epsilon = 0
 
 instance (Numeric a) => Tolerance 1 a where
-    epsilon = one
+    epsilon = 1
     
 -- instance (Numeric a) => Tolerance 6 a where
 --     epsilon = num 4

@@ -1,49 +1,79 @@
 {-# LANGUAGE NoStarIsType #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE TypeInType #-}
 module Alpha.Numerics.Base
 (
     module X,
+    IMappable(..),
+    Computable(..),
+    Evaluatable(..),
+    Mappable(..),
+    ArraySource(..),    
+    Array(..),
     Unbox(..),
-    nat,
-    NatPair(..), nat2,
-    NatTriple(..), nat3,
-    NatQuad(..), nat4,
-    Delayable(..),
-    natmul
+    Accumulator(..),
+    Listing(..),
+    prints, eol, factorial,
+    pattern EOL,
+    
 ) where
-import Alpha as X hiding(Matrix,row,col,matrix, vector, covector, Covector, Vector,Any,All, Zippable(..),natmul,Tabular(..))
+import Alpha as X hiding(Matrix, mapi,row,col,matrix, vector, covector, enclose,
+    Covector, Vector,Any,All, Tabular(..),dot,Bifunctor(..), Computable(..), Zippable(..), Spanned(..)   
+    )
 import Alpha.Numerics.Base.ErrorFunction as X
 import Alpha.Numerics.Base.Tolerance as X
-import Data.Vector.Unboxed
+import Data.Vector.Unboxed(Unbox(..))
+import Data.Array.Repa(Array(..))
+import qualified Data.Array.Repa as Repa
+import qualified Data.List as List
+import qualified Data.Map as Map
 
--- | Alias for a pair of 'KnownNat' constraints
-type NatPair m n = (KnownNat m, KnownNat n)  
+import Prelude(putStrLn)
 
--- | Alias for a truple of 'KnownNat' constraints
-type NatTriple m n p = (NatPair m n, KnownNat p)
+prints::String -> IO()
+prints = putStrLn
 
-type NatQuad m n p q = (NatPair m n, NatPair p q)
+pattern EOL = "\n"
 
--- | Computes the 'Int' value corresponding to a type-level nat
-nat::forall m. KnownNat m => Int
-nat = natVal (proxy @m) |> int
+eol::Text
+eol = "\n"
 
--- | Computes a pair of 'Int' values corresponding to a pair of type-level nats
-nat2::forall m n. NatPair m n => (Int,Int)
-nat2 = (nat @m, nat @n)
-
--- | Computes a triple of 'Int' values corresponding to a triple of type-level nats
-nat3::forall m n p. NatTriple m n p => (Int,Int,Int)
-nat3 = (nat @m, nat @n, nat @p)
-
-nat4::forall m n p q. NatQuad m n p q => (Int,Int,Int,Int)
-nat4 = (nat @m, nat @n, nat @p, nat @q)
-
-natmul::forall m n.(NatPair m n) => Int
-natmul = (nat @m) * (nat @n)
+-- | Classifies a source of array data    
+type ArraySource r a = Repa.Source r a
 
 
-class Delayable a where
-    type Delayed a
+-- | Defines a class of types that represent algorithm definitions 
+class Computable a where
+    type Computation a
 
-    delay::a -> Delayed a
+    -- Defines a computation parameterized
+    comp::a -> Computation a
+
+-- | Defines a class of types that represent algorithm applications/evaluations   
+class Evaluatable a where
+    type Evaluated a
+
+    eval::a -> Evaluated a
+
+class Mappable c a b where    
+    type Mapped c a b
+    map::(a -> b) -> c -> Mapped c a b
+
+instance Mappable [a] a b where
+    type Mapped [a] a b = [b]
+    map = List.map
+
+class IMappable c a b where
+    type MapIndex c a b
+    type IMapped c a b
+    mapi::((MapIndex c a b,a) -> b) -> c -> IMapped c a b
+
+instance Listing (Map a b) where
+    type ListItem (Map a b) = (a,b)
+    list = Map.toList
+
+factorial::Int -> Integer
+factorial val = List.product l where    
+    l = [1..integer(val)] :: [Integer]
     
