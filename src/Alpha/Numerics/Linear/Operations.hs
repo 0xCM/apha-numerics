@@ -34,11 +34,19 @@ import Alpha.Numerics.Linear.Shapes
 
 default(Int,Double)    
 
-            
+type instance Element (Matrix r m n a) = a
+type instance Element (DataTable r a) = a
+type instance Element (ElementFunc a) = a
+
+type instance Biproduct (Matrix r1 m n a) (Matrix r2 n p a) = MatrixComp m p a    
+type instance Biproduct (Covector r n a) (Vector r n a) = a
+type instance Bisum (Matrix r1 n m a) (Matrix r2 n m a) = (MatrixComp n m a)
+type instance Biproduct (DataSlice r a) (DataSlice r a) = a    
+
 dot::(ArraySource r a, Ring a) => (DataSlice r a, DataSlice r a) -> a
 dot (v1, v2) = v1 >*< v2
 
-matrix::forall m n a . (NatPair m n, Unbox a) => [a] -> MatrixComp m n a
+matrix::forall m n a . (KnownNatPair m n, Unbox a) => [a] -> MatrixComp m n a
 matrix v = Matrix $ Repa.delay $ Repa.fromListUnboxed dim v
     where
         (r,c) = nat2 @m @n
@@ -46,7 +54,7 @@ matrix v = Matrix $ Repa.delay $ Repa.fromListUnboxed dim v
 {-# INLINE matrix #-}
 
 -- | Produces a matrix by assigning each element to the result of a supplied function
-matrixF::forall m n a .(NatPair m n) => ((DimIx,DimIx) -> a) -> MatrixComp m n a
+matrixF::forall m n a .(KnownNatPair m n) => ((DimIx,DimIx) -> a) -> MatrixComp m n a
 matrixF f = Matrix $ Repa.fromFunction dim (\s -> f (matidx s) ) 
     where
         (r,c) = nat2 @m @n
@@ -54,7 +62,7 @@ matrixF f = Matrix $ Repa.fromFunction dim (\s -> f (matidx s) )
 {-# INLINE matrixF #-}
 
 vector::forall r a. (KnownNat r, Unbox a) => [a] -> VectorComp r a
-vector components = Vector $ comp $ matrix @r components where    
+vector components = Vector $ compute $ matrix @r components where    
     s = Z :. nat @r
 {-# INLINE vector #-}
 
@@ -65,33 +73,33 @@ covector components = Covector $ matrix @1 @c components where
 {-# INLINE covector #-}
 
 -- | Selects an identified row of data from a matrix    
-row::forall r m n a. (NatPair m n, ArraySource r a) => Int -> Matrix r m n a -> SliceComp a
+row::forall r m n a. (KnownNatPair m n, ArraySource r a) => Int -> Matrix r m n a -> SliceComp a
 row i (Matrix arr) =  DataSlice sl where    
     sl = Repa.slice arr (rowdef i)
 {-# INLINE row #-}
 
-rows::forall r m n a. (NatPair m n, ArraySource r a) => Matrix r m n a -> [SliceComp a]
+rows::forall r m n a. (KnownNatPair m n, ArraySource r a) => Matrix r m n a -> [SliceComp a]
 rows m = [row i m | i <- [0..(nat @m) - 1]] where
 {-# INLINE rows #-}    
 
-cols::forall r m n a. (NatPair m n, ArraySource r a) => Matrix r m n a -> [SliceComp a]
+cols::forall r m n a. (KnownNatPair m n, ArraySource r a) => Matrix r m n a -> [SliceComp a]
 cols m = [col i m | i <- [0..(nat @n) - 1]] where
 {-# INLINE cols #-}    
 
 -- | Selects an identified column of data from a matrix    
-col::forall r m n a. (NatPair m n, ArraySource r a) => Int -> Matrix r m n a -> SliceComp a
+col::forall r m n a. (KnownNatPair m n, ArraySource r a) => Int -> Matrix r m n a -> SliceComp a
 col i (Matrix arr) =  DataSlice sl where    
     sl = Repa.slice arr (coldef i)
 {-# INLINE col #-}
 
 --- | Selects an identified row and column of data from a matrix
-cross::forall r1 r2 m n p q a. (NatQuad m n p q, ArraySource r1 a, ArraySource r2 a) 
+cross::forall r1 r2 m n p q a. (KnownNatQuad m n p q, ArraySource r1 a, ArraySource r2 a) 
     => (Int,Int) -> Matrix r1 m n a -> Matrix r2 p q a -> (SliceComp a, SliceComp a)
 cross (i,j) m1 m2 = (row i m1, col j m2)
 {-# INLINE cross #-}
 
 -- | Extracts a submatrix from a source matrix    
-submatrix::forall r1 c1 r2 c2 r m n a. (NatPair m n, NatQuad r1 c1 r2 c2, ArraySource r a)  
+submatrix::forall r1 c1 r2 c2 r m n a. (KnownNatPair m n, KnownNatQuad r1 c1 r2 c2, ArraySource r a)  
         =>  Matrix r m n a -> MatrixComp (r2 - r1) (c2 - c1) a
 submatrix (Matrix arr) = Matrix $ subtable r arr
     where
@@ -108,13 +116,14 @@ table (r,c) src =  DataTable $ Repa.fromFunction dim (\i -> src V.! int (rowidx 
 kdelta::(Nullary a, Unital a) => (DimIx, DimIx) -> a
 kdelta (i, j) = ifelse (i==j) one zero
 
-rowmul::forall r m n a. (NatPair m n, Multiplicative a, ArraySource r a) 
+rowmul::forall r m n a. (KnownNatPair m n, Multiplicative a, ArraySource r a) 
     => DimIx ->  a -> Matrix r m n a -> MatrixComp m n a
 rowmul = undefined
 
+
 instance MatrixSource (ElementFunc a) where
     type MatrixElement (ElementFunc a) = a
-    matrix'::forall m n .(NatPair m n) => ElementFunc a -> MatrixComp m n a    
+    matrix'::forall m n .(KnownNatPair m n) => ElementFunc a -> MatrixComp m n a    
     matrix' f = Matrix $ Repa.fromFunction dim (\s -> f (matidx s) ) 
         where
             (r,c) = nat2 @m @n
@@ -123,7 +132,7 @@ instance MatrixSource (ElementFunc a) where
 
 instance (Unbox a) => MatrixSource [a] where    
     type MatrixElement [a] = a
-    matrix'::forall m n. (NatPair m n) => [a] -> MatrixComp m n a    
+    matrix'::forall m n. (KnownNatPair m n) => [a] -> MatrixComp m n a    
     matrix' v = Matrix $ Repa.delay $ Repa.fromListUnboxed dim v
         where
             (r,c) = nat2 @m @n
@@ -144,7 +153,7 @@ instance forall r m n a b.(ArraySource r a) => Mappable (Matrix r m n a) a b  wh
     map f (Matrix arr) = Matrix $ map f arr
     {-# INLINE map #-}                    
     
-instance forall m n a. (NatPair m n, Nullary a) => Nullary (MatrixComp m n a) where
+instance forall m n a. (KnownNatPair m n, Nullary a) => Nullary (MatrixComp m n a) where
     zero = matrixF (\_ -> zero)
     {-# INLINE zero #-}                    
 
@@ -152,41 +161,39 @@ instance forall n a. (KnownNat n, Unital a, Nullary a, Unbox a) => Unital (Matri
     one = matrixF kdelta
     {-# INLINE one #-}                    
     
-instance forall m n a r. (NatPair m n, ArraySource r a) => Transposable (Matrix r m n a) where
+instance forall m n a r. (KnownNatPair m n, ArraySource r a) => Transposable (Matrix r m n a) where
     type Transposed (Matrix r m n a) = MatrixComp n m a
     
     transpose (Matrix arr) = Matrix $ backpermute newExtent swap arr where
             swap (Z :. i :. j) = Z :. j :. i
             newExtent = swap (extent arr)
     {-# NOINLINE transpose #-}
-                
-instance forall r1 r2 m n p a. (NatTriple m n p, Unbox a, ArraySource r1 a, ArraySource r2 a, Ring a)  => HMultiplicative (Matrix r1 m n a) (Matrix r2 n p a) where
-    type HProduct (Matrix r1 m n a) (Matrix r2 n p a) = MatrixComp m p a    
+    
+instance forall r1 r2 m n p a. (KnownNatTriple m n p, Unbox a, ArraySource r1 a, ArraySource r2 a, Ring a)  => HMultiplicative (Matrix r1 m n a) (Matrix r2 n p a) where
 
     hmul m1 m2 = prodidx @m @p |> fmap (\(i,j) -> dot $ cross (i,j) m1 m2) |> matrix
         where
-            prodidx::forall m p. NatPair m p =>  [(Int,Int)]
+            prodidx::forall m p. KnownNatPair m p =>  [(Int,Int)]
             prodidx = result where
                 (m,p) = nat2 @m @p
                 result = [(i,j) | i <- [0..m - 1], j <- [0..p - 1]]    
     {-# NOINLINE hmul #-}
 
 instance forall r n a. (KnownNat n, Ring a, ArraySource r a) => HMultiplicative (Covector r n a) (Vector r n a) where
-    type HProduct (Covector r n a) (Vector r n a) = a
     hmul (Covector m1) (Vector m2) = v1 >*< v2 where
         v1 = row 1 m1
         v2 = col 1 m2
-    
-instance forall r1 r2 n m a. (NatPair m n, ArraySource r1 a, ArraySource r2 a, Additive a) => HAdditive (Matrix r1 n m a) (Matrix r2 n m a) where
-    type HSum (Matrix r1 n m a) (Matrix r2 n m a) = (MatrixComp n m a)
+
+        
+instance forall r1 r2 n m a. (KnownNatPair m n, ArraySource r1 a, ArraySource r2 a, Additive a) => HAdditive (Matrix r1 n m a) (Matrix r2 n m a) where
     hadd (Matrix m1) (Matrix m2) = Matrix $ bimap (+) m1 m2
     {-# INLINE hadd #-}
 
-instance forall n m a. (NatPair m n, ArraySource D a, Additive a) => Additive (MatrixComp n m a) where
+instance forall n m a. (KnownNatPair m n, ArraySource D a, Additive a) => Additive (MatrixComp n m a) where
     add (Matrix m1) (Matrix m2) = Matrix $ bimap (+) m1 m2
     {-# INLINE add #-}    
 
-instance forall m n a.(NatPair m n, Unbox a) => IsList (MatrixEval m n a) where
+instance forall m n a.(KnownNatPair m n, Unbox a) => IsList (MatrixEval m n a) where
     type Item (Matrix U m n a) = a
     
     toList (Matrix m) = Repa.toList m
@@ -195,7 +202,7 @@ instance forall m n a.(NatPair m n, Unbox a) => IsList (MatrixEval m n a) where
     fromList =   eval . matrix
     {-# INLINE fromList #-}
 
-instance forall m n a.(Unbox a, NatPair m n) => IsList (MatrixComp m n a) where
+instance forall m n a.(Unbox a, KnownNatPair m n) => IsList (MatrixComp m n a) where
     type Item (Matrix D m n a) = a
     
     toList (Matrix m) = Repa.toList m
@@ -214,13 +221,11 @@ instance (ArraySource r a, Negatable a) => Negatable (Matrix r m n a) where
     negate (Matrix arr) = Matrix $ negate arr 
     {-# INLINE negate #-}
 
-instance (ArraySource r a) => Indexed (Matrix r m n a) (Int,Int) where
-    type Found (Matrix r m n a) (Int,Int) = a    
+instance (ArraySource r a) => Indexed (Matrix r m n a) (Int,Int) where    
     lookup (Matrix arr) (i,j) = arr Repa.! dimension (i,j)
     {-# INLINE lookup #-}
     
-instance (ArraySource r a, Ring a) => HMultiplicative (DataSlice r a) (DataSlice r a) where
-    type HProduct (DataSlice r a) (DataSlice r a) = a
+instance (ArraySource r a, Ring a) => HMultiplicative (DataSlice r a) (DataSlice r a) where    
     hmul (DataSlice v1) (DataSlice v2)  = accumulate $ zip (*) v1 v2
     
 instance forall r m n k a. (ArraySource r a, LeftScalar k a) => LeftScalar k (Matrix r m n a) where
@@ -239,11 +244,10 @@ instance forall m n a. (Show a, Unbox a) => Show (MatrixEval m n a) where
     
 instance (ArraySource r a) => Computable (Matrix r m n a) where
     type Computation (Matrix r m n a) = MatrixComp m n a
-    comp (Matrix arr) = Matrix $ Repa.delay arr
-    {-# INLINE comp #-}
+    compute (Matrix arr) = Matrix $ Repa.delay arr
+    {-# INLINE compute #-}
     
 instance (ArraySource r a) => Indexed (DataTable r a) (Int,Int) where
-    type Found (DataTable r a) (Int,Int) = a    
     lookup (DataTable arr) (i,j) = arr Repa.! (Z :. i :. j)
     {-# INLINE lookup #-}
         

@@ -83,10 +83,7 @@ type CovectorEval n a = Covector U n a
 
 type ElementFunc a = (DimIx,DimIx) -> a
 
-
     
-    
-
 class MatrixSource s where  
     type MatrixElement s  
-    matrix'::forall m n. NatPair m n => s -> MatrixComp m n (MatrixElement s)
+    matrix'::forall m n. KnownNatPair m n => s -> MatrixComp m n (MatrixElement s)

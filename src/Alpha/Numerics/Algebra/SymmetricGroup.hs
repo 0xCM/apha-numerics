@@ -19,6 +19,8 @@ import qualified Data.Text as Text
 -- Represents the set of all permutations on a set with n elements    
 data SymmetricGroup n = SymmetricGroup [Permutation n]
 
+type instance Element (SymmetricGroup n) = Permutation n
+
 -- Constructs the symmetric group of degree n        
 symgroup::forall n.KnownNat n => SymmetricGroup n
 symgroup = sg where
@@ -38,19 +40,21 @@ instance forall n. KnownNat n => Formattable (SymmetricGroup n) where
     format (SymmetricGroup sg) 
         = [TC.Su, n, TC.Colon, EOL, items] |> Text.concat  where        
             n = format (nat @n) 
-            items = sg |> fmap (\p -> format p) |> TC.intersperse '\n' 
+            items = sg |> fmap (\p -> format p) |> format
+
+instance forall n. KnownNat n => Show (SymmetricGroup n) where
+    show = string . format 
 
 instance forall n. KnownNat n  => Listing (SymmetricGroup n) where   
-    type ListItem (SymmetricGroup n)  = Permutation n
     list (SymmetricGroup sg) = fmap (\x -> unwrap x) sg |> fmap Permutation
         
 instance forall n. KnownNat n  => Membership (SymmetricGroup n) where
-    type Member (SymmetricGroup n) = Map Int Int
-    members (SymmetricGroup sg) = sg |> fmap (\x -> unwrap x) |> set
+    members (SymmetricGroup sg) = sg |> set
 
 instance forall n. KnownNat n => Structured (SymmetricGroup n) where
-    type Element (SymmetricGroup n) = Permutation n
-
+    elements = sg where
+        (SymmetricGroup sg) = symgroup @n 
+    
 instance forall n. KnownNat n => Unital (SymmetricGroup n) where
     one::Permutation n
     one = A.one
@@ -70,7 +74,6 @@ instance forall n. KnownNat n => Monoid (SymmetricGroup n) where
 instance forall n. KnownNat n => Group (SymmetricGroup n)
 
 instance forall n. KnownNat n => Indexed (SymmetricGroup n) Int where
-    type Found (SymmetricGroup n) Int = Permutation n
     lookup sg i = (list sg) List.!! i
 
 instance forall n. KnownNat n => Counted (SymmetricGroup n) where

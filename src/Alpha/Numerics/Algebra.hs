@@ -4,3 +4,4 @@ module Alpha.Numerics.Algebra
 ) where
 import Alpha.Numerics.Algebra.Permutation as X
 import Alpha.Numerics.Algebra.SymmetricGroup as X
+import Alpha.Numerics.Algebra.Primality as X

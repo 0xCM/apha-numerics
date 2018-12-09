@@ -67,7 +67,7 @@ region::(Int,Int) -> (Int,Int) -> Region
 region (r1,c1) (r2, c2) 
     = Region ( Z :. r1 :. c1, Z :. (r2 - r1 + 1) :. (c2 - c1 + 1)) 
 
-natregion::forall r1 c1 r2 c2. NatQuad r1 c1 r2 c2 => Region
+natregion::forall r1 c1 r2 c2. KnownNatQuad r1 c1 r2 c2 => Region
 natregion = region (nat2 @r1 @c1) (nat2 @r2 @c2) where
     
 instance Dimensional Int where

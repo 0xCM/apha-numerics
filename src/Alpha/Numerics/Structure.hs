@@ -9,10 +9,10 @@ module Alpha.Numerics.Structure
     
 )
 where
-import Alpha(Eq(..),Set(..))
+import Alpha(Element(..), Eq(..),Set(..))
 
 class Structured s where
-    type Element s
+    elements::[Element s]
     
 class (Structured s) => Unital s where
     one::Element s

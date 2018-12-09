@@ -15,6 +15,8 @@ import qualified Data.Array.Repa.Algorithms.Matrix as Repa
 
 import Alpha.Numerics.Linear.Shapes
 
+type instance Element (Array r s a) = a
+
 -- Alias for a 1D array
 type Array1D r a = Array r DIM1 a
 
@@ -77,7 +79,6 @@ instance (Shape s, ArraySource r a) => IMappable (Array r s a) a b where
     {-# INLINE mapi #-}        
 
 instance (ArraySource r a) => Indexed (Array r DIM1 a) Int where
-    type Found (Array r DIM1 a) Int = a    
     lookup arr i = arr Repa.! (Z :. i)
     {-# INLINE lookup #-}
     

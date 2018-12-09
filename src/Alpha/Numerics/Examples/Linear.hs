@@ -2,7 +2,6 @@
 
 module Alpha.Numerics.Examples.Linear where
 import Alpha.Numerics
-import Alpha
 import qualified Data.List as L
 default(Int,Double,Text)    
 
