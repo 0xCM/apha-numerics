@@ -4,17 +4,16 @@ module Alpha.Numerics.Algebra.SymmetricGroup
 )
 where
 import Alpha.Numerics.Base hiding(Unital, one, Invertible,Semigroup,Monoid,Group)
+import Alpha.Numerics.Algebra.Permutation
+import Alpha.Canonical.Structures 
+import qualified Alpha.Canonical.Algebra as A
+
+import qualified Data.Semigroup as Semigroup
+import qualified Data.Text as Text
 import qualified Data.List as List
 import qualified Data.Map as Map
-import Alpha.Numerics.Algebra.Permutation
-import Alpha.Numerics.Structure
-import qualified Alpha.Canonical.Algebra as A
-import qualified Data.Semigroup as S
-import qualified Data.Monoid as M
-import qualified Alpha.Text.Combinators as TC
-import qualified Alpha.Text.Symbols as TC
-import qualified Alpha.Text.Asci as TC
-import qualified Data.Text as Text
+
+import Alpha.Canonical.Text.Asci
 
 -- Represents the set of all permutations on a set with n elements    
 data SymmetricGroup n = SymmetricGroup [Permutation n]
@@ -33,12 +32,12 @@ symgroup = sg where
 
 instance forall n. KnownNat n => Eq (SymmetricGroup n) where
     g1 == g2 = s1 == s2 where
-        s1 = members g1
-        s2 = members g2
+        s1 = elements g1
+        s2 = elements g2
             
 instance forall n. KnownNat n => Formattable (SymmetricGroup n) where
     format (SymmetricGroup sg) 
-        = [TC.Su, n, TC.Colon, EOL, items] |> Text.concat  where        
+        = [Su, n, Colon, EOL, items] |> Text.concat  where        
             n = format (nat @n) 
             items = sg |> fmap (\p -> format p) |> format
 
@@ -48,12 +47,8 @@ instance forall n. KnownNat n => Show (SymmetricGroup n) where
 instance forall n. KnownNat n  => Listing (SymmetricGroup n) where   
     list (SymmetricGroup sg) = fmap (\x -> unwrap x) sg |> fmap Permutation
         
-instance forall n. KnownNat n  => Membership (SymmetricGroup n) where
-    members (SymmetricGroup sg) = sg |> set
-
-instance forall n. KnownNat n => Structured (SymmetricGroup n) where
-    elements = sg where
-        (SymmetricGroup sg) = symgroup @n 
+instance forall n. KnownNat n  => Structure (SymmetricGroup n) where
+    elements (SymmetricGroup sg) = sg 
     
 instance forall n. KnownNat n => Unital (SymmetricGroup n) where
     one::Permutation n
@@ -65,7 +60,7 @@ instance forall n. KnownNat n => Invertible (SymmetricGroup n) where
 
 instance forall n. KnownNat n => Semigroup (SymmetricGroup n) where
     (<>)::BinaryOperator (Permutation n)
-    (<>) = (S.<>)
+    (<>) = (Semigroup.<>)
     
 instance forall n. KnownNat n => Monoid (SymmetricGroup n) where
     mempty::Permutation n
@@ -74,7 +69,7 @@ instance forall n. KnownNat n => Monoid (SymmetricGroup n) where
 instance forall n. KnownNat n => Group (SymmetricGroup n)
 
 instance forall n. KnownNat n => Indexed (SymmetricGroup n) Int where
-    lookup sg i = (list sg) List.!! i
+    at sg i = (list sg) List.!! i
 
 instance forall n. KnownNat n => Counted (SymmetricGroup n) where
     count _ = factorial (nat @n) |> fromIntegral

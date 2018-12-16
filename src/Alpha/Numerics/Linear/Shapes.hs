@@ -69,13 +69,14 @@ region (r1,c1) (r2, c2)
 
 natregion::forall r1 c1 r2 c2. KnownNatQuad r1 c1 r2 c2 => Region
 natregion = region (nat2 @r1 @c1) (nat2 @r2 @c2) where
+type instance Dimension Int = Z :. Int
     
 instance Dimensional Int where
-    type Dimension Int = Z :. Int
     dimension i = Z :. i
     {-# INLINE dimension #-}
 
+type instance Dimension (Int,Int) = Z :. Int :. Int
+
 instance Dimensional (Int,Int) where
-    type Dimension (Int,Int) = Z :. Int :. Int
     dimension (i,j) = Z :. i :. j
     {-# INLINE dimension #-}

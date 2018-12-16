@@ -11,16 +11,19 @@ module Alpha.Numerics.Base
     Unbox(..),
     Accumulator(..),
     Evaluatable(..),
-    prints, eol, factorial,
-    pattern EOL,
+    Example(..),
+    prints, 
     
 ) where
 import Alpha as X hiding(
-    Matrix, Covector, Vector,Any,All, Tabular(..),dot,Bifunctor(..), Zippable(..), Spanned(..), DataTable(..),
-    mapi,row,col,matrix, vector, covector, enclose)
+    Matrix, Covector, Vector,Any,All, Bifunctor(..), Zippable(..), Spanned(..), DataTable(..),
+    mapi,row,col, matrix, vector, covector, dot,)
 
 import Alpha.Numerics.Base.ErrorFunction as X
 import Alpha.Numerics.Base.Tolerance as X
+import Alpha.Numerics.Base.Factorial as X
+import Alpha.Canonical.Algebra.Universal(all)
+
 import Data.Vector.Unboxed(Unbox(..))
 import Data.Array.Repa(Array(..))
 import qualified Alpha as A
@@ -34,14 +37,16 @@ import Prelude(putStrLn)
 prints::String -> IO()
 prints = putStrLn
 
-pattern EOL = "\n"
-
-eol::Text
-eol = "\n"
 
 -- | Classifies a source of array data    
 type ArraySource r a = Repa.Source r a
 
+
+class (KnownSymbol s) => Example s where
+    example::IO()
+    
+    name::String
+    name = symstr @s 
 
 -- | Defines a class of types that represent algorithm applications/evaluations   
 class Evaluatable a where
@@ -61,8 +66,3 @@ instance IMappable [a] a b where
     
     mapi::((Int,a) -> b) -> [a] -> [b]
     mapi = A.mapi
-
-factorial::Int -> Integer
-factorial val = List.product l where    
-    l = [1..integer(val)] :: [Integer]
-    

@@ -2,45 +2,45 @@
 
 module Alpha.Numerics.Examples.Linear where
 import Alpha.Numerics
+import Alpha.Structures.Linear
 import qualified Data.List as L
 default(Int,Double,Text)    
 
+instance Example "l-1" where
+    example = do
+        let m =  matrix @3 @3 [1..9] |> eval
+        let m1 = transpose m |> eval
+        let m2 = transpose m1 |> eval
+        print m
+        print m1
+        print m2
+        print (m1 == m2)
+        --print m1 == m2
 
-
-example1::IO()
-example1 = do
-    let m =  matrix @3 @3 [1..9] |> eval
-    let m1 = transpose m |> eval
-    let m2 = transpose m1 |> eval
-    print m
-    print m1
-    print m2
-    print (m1 == m2)
-    --print m1 == m2
-
-example2::IO()
-example2 = do
-    let m1 = matrix @2 @3 [2,4,6,8,10,12]
-    let m2 = matrix @3 @2 [1,3,5,7,9,11]
-    let result1 =  m1 >*< m2 |> eval
-    print result1
+instance Example "l-2" where
+    example = do
+        let m1 = matrix @2 @3 [2,4,6,8,10,12]
+        let m2 = matrix @3 @2 [1,3,5,7,9,11]
+        let result1 =  m1 >*< m2 |> eval
+        print result1
     
-example3::IO()   
-example3 = do
-    let mat33 = matrix @3 @3 [1..9] 
-    let test =  mat33 ! (2,2) 
-    print test
+instance Example "l-3" where
+    example = do
+        let mat33 = matrix @3 @3 [1..9] 
+        let test =  mat33 ! (2,2) 
+        print test
 
-example4::IO()
-example4 = do    
-    let m = matrix @5 @5 [1..25] |> eval
-    let sm = submatrix @0 @0 @2 @2 m |> eval
-    print sm
+
+instance Example "l-4" where
+    example = do    
+        let m = matrix @5 @5 [1..25] |> eval
+        let sm = submatrix @0 @0 @2 @2 m |> eval
+        print sm
    
-example5::IO()
-example5 = do
-    let m1 = matrix @3 @3 [0..8] 
-    print (eval m1)
+instance Example "l-5" where
+    example = do
+        let m1 = matrix @3 @3 [0..8] 
+        print (eval m1)
 
 example6::IO()
 example6 = do

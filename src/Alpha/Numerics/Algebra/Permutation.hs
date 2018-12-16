@@ -13,13 +13,14 @@ import qualified Data.List as List
 import qualified Data.Map as Map
 import qualified Alpha.Text.Combinators as TC
 import qualified Alpha.Text.Symbols as TC
-import Alpha.Text.Combinators(enclose)
 import Alpha.Text.Symbols(pipe,space)
+import Alpha.Canonical.Text(enclose)
 import qualified Data.Text as Text
 import Prelude(snd)
 import qualified Alpha as A
-
 default (Int, Double, Text)
+
+pattern EOL = "\n"::Text
 
 type PermutationMap = Map Int Int
 
@@ -67,23 +68,26 @@ switch (i,j) p =  unwrap p |> toList |> fmap (\(r,s) -> rule (r,s) ) |> perm
 
 instance Formattable (Permutation n) where
     format (Permutation perm) = rows where
-        row1 = perm |> list |> fmap (\(x,y) -> format x) |> intersperse space |> enclose pipe pipe
-        row2 = perm |> list |> fmap (\(x,y) -> format y) |> intersperse space |> enclose pipe pipe 
+        row1 = perm |> list |> fmap (\(x,y) -> format x) |> weave space |> enclose pipe pipe
+        row2 = perm |> list |> fmap (\(x,y) -> format y) |> weave space |> enclose pipe pipe 
         sep = clone 20 "-"
-        rows = sep +++ eol +++ row1 +++ eol +++ row2
+        rows = sep +++ EOL +++ row1 +++ EOL +++ row2
 
 instance Show (Permutation n) where
     show = string . format
 
 instance forall n a.KnownNat n =>  Indexed (Permutation n) Int where
-    lookup (Permutation s ) i = s Map.! i
+    at (Permutation s ) i = s Map.! i
     
 instance  KnownNat n => Semigroup (Permutation n) where
     g <> (Permutation f) = f |> Map.toList 
                                 |> fmap (\(i,j) -> (i, g ! j)) 
                                 |> Map.fromList 
                                 |> Permutation
-                                                        
+                                                   
+instance forall n. KnownNat n => Multiplicative (Permutation n) where
+    mul g f = g <> f
+
 instance forall n. KnownNat n =>  Unital (Permutation n) where
     one = permutation @n [minBound..maxBound] where
         n = int $ nat @n

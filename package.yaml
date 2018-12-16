@@ -37,7 +37,6 @@ default-extensions:
   MultiWayIf
   NoImplicitPrelude
   OverloadedLabels
-  OverloadedLists
   OverloadedStrings
   ParallelListComp
   PatternSynonyms

@@ -9,28 +9,28 @@
 {-# LANGUAGE UndecidableInstances #-}
 module Alpha.Numerics.Linear.Operations
 (
+    Transposable(..),
     dot, vector, covector,
     row, rows,
     col, cols,
     cross, submatrix, table, matrixF,matrix,
     kdelta,
+    vtable
 
 
 ) where
+import Control.Monad.ST.Strict    
+import qualified Data.Vector as V
+import Alpha.Numerics.Base
+import Alpha.Numerics.Linear.Adapters
+import Alpha.Numerics.Linear.Shapes
+import Alpha.Structures.Linear
+
 import Data.Array.Repa.Eval(Load(..))
+import Data.Array.Repa.Index(Z(..), (:.)(..), (:.))
 import qualified Data.Array.Repa as Repa
 import qualified Data.Array.Repa.Eval as Repa hiding(one)
 import qualified Data.Array.Repa.Index as Repa
-import Data.Array.Repa.Index(Z(..), (:.)(..), (:.))
-import Control.Monad
-import Control.Monad.ST.Strict    
-import qualified Data.Vector as V
-import qualified Data.List as L
-
-import Alpha.Numerics.Base
-import Alpha.Numerics.Linear.Structures
-import Alpha.Numerics.Linear.Adapters
-import Alpha.Numerics.Linear.Shapes
 
 default(Int,Double)    
 
@@ -38,10 +38,16 @@ type instance Element (Matrix r m n a) = a
 type instance Element (DataTable r a) = a
 type instance Element (ElementFunc a) = a
 
-type instance Biproduct (Matrix r1 m n a) (Matrix r2 n p a) = MatrixComp m p a    
-type instance Biproduct (Covector r n a) (Vector r n a) = a
-type instance Bisum (Matrix r1 n m a) (Matrix r2 n m a) = (MatrixComp n m a)
-type instance Biproduct (DataSlice r a) (DataSlice r a) = a    
+type instance Multiplied (Matrix r1 m n a) (Matrix r2 n p a) = MatrixComp m p a    
+type instance Multiplied (Covector r n a) (Vector r n a) = a
+type instance Summed (Matrix r1 n m a) (Matrix r2 n m a) = (MatrixComp n m a)
+type instance Multiplied (DataSlice r a) (DataSlice r a) = a    
+
+
+class Transposable a where
+    type Transposed a
+
+    transpose::a -> Transposed a
 
 dot::(ArraySource r a, Ring a) => (DataSlice r a, DataSlice r a) -> a
 dot (v1, v2) = v1 >*< v2
@@ -108,10 +114,10 @@ submatrix (Matrix arr) = Matrix $ subtable r arr
 {-# INLINE submatrix #-}
 
 -- | Produces a table computation from a source vector
-table::(Int,Int) -> V.Vector a -> TableComp a
-table (r,c) src =  DataTable $ Repa.fromFunction dim (\i -> src V.! int (rowidx i) ) 
+vtable::(Int,Int) -> V.Vector a -> TableComp a
+vtable (r,c) src =  DataTable $ Repa.fromFunction dim (\i -> src ! int (rowidx i) ) 
     where dim = Z :. r :. c
-{-# INLINE table #-}
+{-# INLINE vtable #-}
 
 kdelta::(Nullary a, Unital a) => (DimIx, DimIx) -> a
 kdelta (i, j) = ifelse (i==j) one zero
@@ -119,7 +125,6 @@ kdelta (i, j) = ifelse (i==j) one zero
 rowmul::forall r m n a. (KnownNatPair m n, Multiplicative a, ArraySource r a) 
     => DimIx ->  a -> Matrix r m n a -> MatrixComp m n a
 rowmul = undefined
-
 
 instance MatrixSource (ElementFunc a) where
     type MatrixElement (ElementFunc a) = a
@@ -169,25 +174,25 @@ instance forall m n a r. (KnownNatPair m n, ArraySource r a) => Transposable (Ma
             newExtent = swap (extent arr)
     {-# NOINLINE transpose #-}
     
-instance forall r1 r2 m n p a. (KnownNatTriple m n p, Unbox a, ArraySource r1 a, ArraySource r2 a, Ring a)  => HMultiplicative (Matrix r1 m n a) (Matrix r2 n p a) where
+instance forall r1 r2 m n p a. (KnownNatTriple m n p, Unbox a, ArraySource r1 a, ArraySource r2 a, Ring a)  => Bimultiplicative (Matrix r1 m n a) (Matrix r2 n p a) where
 
-    hmul m1 m2 = prodidx @m @p |> fmap (\(i,j) -> dot $ cross (i,j) m1 m2) |> matrix
+    bimul m1 m2 = prodidx @m @p |> fmap (\(i,j) -> dot $ cross (i,j) m1 m2) |> matrix
         where
             prodidx::forall m p. KnownNatPair m p =>  [(Int,Int)]
             prodidx = result where
                 (m,p) = nat2 @m @p
                 result = [(i,j) | i <- [0..m - 1], j <- [0..p - 1]]    
-    {-# NOINLINE hmul #-}
+    {-# NOINLINE bimul #-}
 
-instance forall r n a. (KnownNat n, Ring a, ArraySource r a) => HMultiplicative (Covector r n a) (Vector r n a) where
-    hmul (Covector m1) (Vector m2) = v1 >*< v2 where
+instance forall r n a. (KnownNat n, Ring a, ArraySource r a) => Bimultiplicative (Covector r n a) (Vector r n a) where
+    bimul (Covector m1) (Vector m2) = v1 >*< v2 where
         v1 = row 1 m1
         v2 = col 1 m2
 
         
-instance forall r1 r2 n m a. (KnownNatPair m n, ArraySource r1 a, ArraySource r2 a, Additive a) => HAdditive (Matrix r1 n m a) (Matrix r2 n m a) where
-    hadd (Matrix m1) (Matrix m2) = Matrix $ bimap (+) m1 m2
-    {-# INLINE hadd #-}
+instance forall r1 r2 n m a. (KnownNatPair m n, ArraySource r1 a, ArraySource r2 a, Additive a) => Biadditive (Matrix r1 n m a) (Matrix r2 n m a) where
+    biadd (Matrix m1) (Matrix m2) = Matrix $ bimap (+) m1 m2
+    {-# INLINE biadd #-}
 
 instance forall n m a. (KnownNatPair m n, ArraySource D a, Additive a) => Additive (MatrixComp n m a) where
     add (Matrix m1) (Matrix m2) = Matrix $ bimap (+) m1 m2
@@ -216,17 +221,18 @@ instance (ArraySource r a, Ring a) => Accumulator (Matrix r m n a) where
     accumulate (Matrix arr) = accumulate arr
     {-# INLINE accumulate #-}
 
-instance (ArraySource r a, Negatable a) => Negatable (Matrix r m n a) where 
-    type Negated (Matrix r m n a) = MatrixComp m n (Negated a)
-    negate (Matrix arr) = Matrix $ negate arr 
-    {-# INLINE negate #-}
+type instance Negated (Matrix r m n a) = MatrixComp m n (Negated a)
+
+instance (ArraySource r a, Binegatable a) => Binegatable (Matrix r m n a) where 
+    binegate (Matrix arr) = Matrix $ binegate arr 
+    {-# INLINE binegate #-}
 
 instance (ArraySource r a) => Indexed (Matrix r m n a) (Int,Int) where    
-    lookup (Matrix arr) (i,j) = arr Repa.! dimension (i,j)
-    {-# INLINE lookup #-}
+    at (Matrix arr) (i,j) = arr Repa.! dimension (i,j)
+    {-# INLINE at #-}
     
-instance (ArraySource r a, Ring a) => HMultiplicative (DataSlice r a) (DataSlice r a) where    
-    hmul (DataSlice v1) (DataSlice v2)  = accumulate $ zip (*) v1 v2
+instance (ArraySource r a, Ring a) => Bimultiplicative (DataSlice r a) (DataSlice r a) where    
+    bimul (DataSlice v1) (DataSlice v2)  = accumulate $ zip (*) v1 v2
     
 instance forall r m n k a. (ArraySource r a, LeftScalar k a) => LeftScalar k (Matrix r m n a) where
     type LeftScaled k (Matrix r m n a) = MatrixComp m n (LeftScaled k a)
@@ -248,8 +254,8 @@ instance (ArraySource r a) => Computable (Matrix r m n a) where
     {-# INLINE compute #-}
     
 instance (ArraySource r a) => Indexed (DataTable r a) (Int,Int) where
-    lookup (DataTable arr) (i,j) = arr Repa.! (Z :. i :. j)
-    {-# INLINE lookup #-}
+    at (DataTable arr) (i,j) = arr Repa.! (Z :. i :. j)
+    {-# INLINE at #-}
         
 instance (Load r DIM1 a, Unbox a) => Evaluatable (DataSlice r a) where
     type Evaluated (DataSlice r a) = SliceEval a

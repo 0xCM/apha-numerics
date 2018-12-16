@@ -2,15 +2,10 @@
 
 module Alpha.Numerics.Examples.Permutations where
 import Alpha.Numerics
-import qualified Alpha.Numerics.Structure as Struct
+import qualified Alpha.Structures as Struct
 
 default(Int,Double,Text) 
 
-class (KnownSymbol s) => Example s where
-    example::IO()
-    
-    name::String
-    name = symstr @s 
 
 instance Example "p-1" where
     example = do

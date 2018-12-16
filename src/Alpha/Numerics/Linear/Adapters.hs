@@ -79,10 +79,11 @@ instance (Shape s, ArraySource r a) => IMappable (Array r s a) a b where
     {-# INLINE mapi #-}        
 
 instance (ArraySource r a) => Indexed (Array r DIM1 a) Int where
-    lookup arr i = arr Repa.! (Z :. i)
-    {-# INLINE lookup #-}
+    at arr i = arr Repa.! (Z :. i)
+    {-# INLINE at #-}
+
+type instance Negated (Array r s a) = ArrayComp s (Negated a)
     
-instance (Shape s, ArraySource r a, Negatable a) => Negatable (Array r s a) where 
-    type Negated (Array r s a) = ArrayComp s (Negated a)
-    negate arr = Repa.map negate arr
-    {-# INLINE negate #-}    
+instance (Shape s, ArraySource r a, Binegatable a) => Binegatable (Array r s a) where 
+    binegate arr = Repa.map binegate arr
+    {-# INLINE binegate #-}    

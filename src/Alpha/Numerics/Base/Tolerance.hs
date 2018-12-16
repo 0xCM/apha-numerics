@@ -11,7 +11,7 @@ import Alpha
 -- | Calculates whether the magnitude of the difference between two
 -- numbers is less than a specified level of tolerance    
 within::(Numeric a) => a -> a -> a -> Bool
-within x y e = (abs x - y) < e
+within x y e = abs (x - y) < e
 
 class (Numeric a) => Approximate a where
     almost::a -> a -> Bool

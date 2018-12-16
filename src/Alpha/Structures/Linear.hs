@@ -4,7 +4,7 @@
 -- License     :  BSD3, per original source
 -- Maintainer  :  0xCM00@gmail.com
 -----------------------------------------------------------------------------
-module Alpha.Numerics.Linear.Structures
+module Alpha.Structures.Linear
 (
     DataTable(..), TableComp(..), TableEval(..),
     DataSlice(..), SliceComp(..), SliceEval(..),

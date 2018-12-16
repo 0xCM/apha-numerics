@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bfc9818426a253ecdf359e6acf9e2e50dd7d2b1c6f5308769ee0519f3ae26c14
+-- hash: 19c5db6857420a6ff2903edf32eb23d47a94774dcedc703cb38c050fecba11de
 
 name:           alpha-numerics
 version:        0.0.1
@@ -28,25 +28,32 @@ library
   exposed-modules:
       Alpha.Numerics
       Alpha.Numerics.Algebra
+      Alpha.Numerics.Algebra.IndexedTerm
       Alpha.Numerics.Algebra.Permutation
       Alpha.Numerics.Algebra.Primality
+      Alpha.Numerics.Algebra.Series
       Alpha.Numerics.Algebra.SymmetricGroup
       Alpha.Numerics.Base
+      Alpha.Numerics.Base.Choose
       Alpha.Numerics.Base.ErrorFunction
+      Alpha.Numerics.Base.Factorial
       Alpha.Numerics.Base.Tolerance
+      Alpha.Numerics.Examples
       Alpha.Numerics.Examples.Linear
       Alpha.Numerics.Examples.Permutations
+      Alpha.Numerics.Examples.Primes
+      Alpha.Numerics.Examples.Series
       Alpha.Numerics.Linear
       Alpha.Numerics.Linear.Adapters
       Alpha.Numerics.Linear.Operations
       Alpha.Numerics.Linear.Shapes
-      Alpha.Numerics.Linear.Structures
-      Alpha.Numerics.Structure
+      Alpha.Structures
+      Alpha.Structures.Linear
   other-modules:
       Paths_alpha_numerics
   hs-source-dirs:
       src
-  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedLists OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
   build-depends:
       adjunctions
     , aeson
@@ -104,7 +111,7 @@ executable numerics-exe
       Paths_alpha_numerics
   hs-source-dirs:
       app
-  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedLists OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       adjunctions
@@ -165,7 +172,7 @@ test-suite numerics-test
       Paths_alpha_numerics
   hs-source-dirs:
       test
-  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedLists OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       adjunctions
