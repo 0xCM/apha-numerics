@@ -13,8 +13,8 @@ module Alpha.Numerics.Base.ErrorFunction
     invnormcdf, inverf, inverfc 
 ) where
 import Foreign.C
-import Alpha
-import Prelude(realToFrac)
+import Alpha(double,fromDouble, pattern PI)
+import Prelude--(realToFrac)
 
 foreign import ccall "erf" c_erf :: CDouble -> CDouble
 foreign import ccall "erfc" c_erfc :: CDouble -> CDouble
@@ -46,7 +46,7 @@ invnormcdf p =
     -- Do one iteration with Halley's root finder to get a more accurate result.
     let x = inorm p
         e = 0.5 * erfc (-x / sqrt 2) - p
-        u = e * sqrt (2*pi) * exp (x*x / 2)
+        u = e * sqrt (2*PI) * exp (x*x / 2)
     in  x - u / (1 + x * u / 2)
 
 inverf::Double -> Double
@@ -94,13 +94,11 @@ inorm p =
             -1/0
         else if p < pLow then
             let q = sqrt(-2*log(p))
-            in  (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6) /
-                 ((((d1*q+d2)*q+d3)*q+d4)*q+1)
+            in  (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6) / ((((d1*q+d2)*q+d3)*q+d4)*q+1)
         else if p < 1 - pLow then
             let q = p - 0.5
                 r = q*q
-            in  (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q /
-                (((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1)
+            in  (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q / (((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1)
         else if p <= 1 then
             - inorm (1 - p)
         else

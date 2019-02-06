@@ -5,11 +5,11 @@
 module Alpha.Numerics.Base
 (
     module X,
+    Accumulator(..),
     IMappable(..),
     ArraySource(..),    
     Array(..),
     Unbox(..),
-    Accumulator(..),
     Evaluatable(..),
     Example(..),
     prints, 
@@ -17,12 +17,10 @@ module Alpha.Numerics.Base
 ) where
 import Alpha as X hiding(
     Matrix, Covector, Vector,Any,All, Bifunctor(..), Zippable(..), Spanned(..), DataTable(..),
-    mapi,row,col, matrix, vector, covector, dot,)
+    mapi,row,col, matrix, vector, covector, dot, Transposable(..),kdelta,rows,cols)
 
 import Alpha.Numerics.Base.ErrorFunction as X
 import Alpha.Numerics.Base.Tolerance as X
-import Alpha.Numerics.Base.Factorial as X
-import Alpha.Canonical.Algebra.Universal(all)
 
 import Data.Vector.Unboxed(Unbox(..))
 import Data.Array.Repa(Array(..))
@@ -42,25 +40,24 @@ prints = putStrLn
 type ArraySource r a = Repa.Source r a
 
 
-class (KnownSymbol s) => Example s where
-    example::IO()
-    
-    name::String
-    name = symstr @s 
-
 -- | Defines a class of types that represent algorithm applications/evaluations   
 class Evaluatable a where
     type Evaluated a
 
     eval::a -> Evaluated a
 
+-- | Accumulation over a structure    
+class Accumulator a where
+    type Accumulation a
+
+    accumulate::a -> Accumulation a  
 
 class IMappable c a b where
     type MapIndex c a b
     type IMapped c a b
     mapi::((MapIndex c a b,a) -> b) -> c -> IMapped c a b
     
-instance IMappable [a] a b where
+instance (Eq a) => IMappable [a] a b where
     type MapIndex [a] a b = Int
     type IMapped [a] a b = [b]
     

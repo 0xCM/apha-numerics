@@ -27,7 +27,7 @@ instance Example "l-2" where
 instance Example "l-3" where
     example = do
         let mat33 = matrix @3 @3 [1..9] 
-        let test =  mat33 ! (2,2) 
+        let test =  mat33 !! (2,2) 
         print test
 
 
@@ -42,32 +42,33 @@ instance Example "l-5" where
         let m1 = matrix @3 @3 [0..8] 
         print (eval m1)
 
-example6::IO()
-example6 = do
-    let m0 = zero::Matrix D 3 3 Int
-    let m1 = one::Matrix D 3 3 Int
-    print (eval m0)
-    print (eval m1)
+instance Example "l-6" where
+    example = do
+        let m0 = zero::Matrix D 3 3 Int
+        let m1 = one::Matrix D 3 3 Int
+        print (eval m0)
+        print (eval m1)
 
-example7::IO()
-example7 = do
-    let m1 = matrix @2 @2 [1, 2, 3, 4]
-    let m2 = matrix @2 @2 [-1, -2, -3, -4]
-    let m = m1 >+< m2
-    print (eval m)
+
+instance Example "l-7" where
+    example = do
+        let m1 = matrix @2 @2 [1, 2, 3, 4]
+        let m2 = matrix @2 @2 [-1, -2, -3, -4]
+        let m = m1 >+< m2
+        print (eval m)
     
 example8::IO()
 example8 = do
     let m = (matrix' @[Int] @2 @2 [1,2,3,4]) + (matrix @2 @2 [-1, -2, -3, -4])    
     print (eval m)
 
-example9::IO()
-example9 = do
-    let m = matrix @2 @2 [1, 0, 0, 1]
-    let s1 = m .* 4
-    let s2 = 8 *. m
-    print (eval s1 ) 
-    print (eval s2 )
+-- example9::IO()
+-- example9 = do
+--     let m = matrix @2 @2 [1, 0, 0, 1]
+--     let s1 = m .* 4
+--     let s2 = 8 *. m
+--     print (eval s1 ) 
+--     print (eval s2 )
     
 example10::IO()
 example10 = do 

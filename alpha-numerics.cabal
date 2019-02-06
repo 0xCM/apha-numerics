@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 19c5db6857420a6ff2903edf32eb23d47a94774dcedc703cb38c050fecba11de
+-- hash: de84fe07b22672ad01ed0e7c66dd8a927db71b3640f45b83b2ba817ec3701bd4
 
 name:           alpha-numerics
 version:        0.0.1
@@ -28,21 +28,15 @@ library
   exposed-modules:
       Alpha.Numerics
       Alpha.Numerics.Algebra
-      Alpha.Numerics.Algebra.IndexedTerm
-      Alpha.Numerics.Algebra.Permutation
       Alpha.Numerics.Algebra.Primality
-      Alpha.Numerics.Algebra.Series
-      Alpha.Numerics.Algebra.SymmetricGroup
       Alpha.Numerics.Base
       Alpha.Numerics.Base.Choose
       Alpha.Numerics.Base.ErrorFunction
-      Alpha.Numerics.Base.Factorial
       Alpha.Numerics.Base.Tolerance
       Alpha.Numerics.Examples
       Alpha.Numerics.Examples.Linear
       Alpha.Numerics.Examples.Permutations
       Alpha.Numerics.Examples.Primes
-      Alpha.Numerics.Examples.Series
       Alpha.Numerics.Linear
       Alpha.Numerics.Linear.Adapters
       Alpha.Numerics.Linear.Operations
@@ -53,13 +47,16 @@ library
       Paths_alpha_numerics
   hs-source-dirs:
       src
-  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  default-extensions: AllowAmbiguousTypes BangPatterns BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DerivingVia DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds PostfixOperators QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  extra-libraries:
+      libopenblas
   build-depends:
       adjunctions
     , aeson
     , aeson-pretty
     , alpha
     , ansi-terminal
+    , arithmoi
     , array
     , base
     , bifunctors
@@ -82,6 +79,7 @@ library
     , intervals
     , keys
     , lattices
+    , matrix
     , mtl
     , multiset
     , network
@@ -89,9 +87,11 @@ library
     , parsec
     , primitive
     , process
+    , profunctors
     , range
     , repa
     , repa-algorithms
+    , scientific
     , semigroupoids
     , semigroups
     , stm
@@ -101,6 +101,7 @@ library
     , text
     , time
     , transformers
+    , unicode-show
     , unordered-containers
     , vector
   default-language: Haskell2010
@@ -111,8 +112,10 @@ executable numerics-exe
       Paths_alpha_numerics
   hs-source-dirs:
       app
-  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  default-extensions: AllowAmbiguousTypes BangPatterns BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DerivingVia DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds PostfixOperators QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  extra-libraries:
+      libopenblas
   build-depends:
       adjunctions
     , aeson
@@ -120,6 +123,7 @@ executable numerics-exe
     , alpha
     , alpha-numerics
     , ansi-terminal
+    , arithmoi
     , array
     , base
     , bifunctors
@@ -142,6 +146,7 @@ executable numerics-exe
     , intervals
     , keys
     , lattices
+    , matrix
     , mtl
     , multiset
     , network
@@ -149,9 +154,11 @@ executable numerics-exe
     , parsec
     , primitive
     , process
+    , profunctors
     , range
     , repa
     , repa-algorithms
+    , scientific
     , semigroupoids
     , semigroups
     , stm
@@ -161,6 +168,7 @@ executable numerics-exe
     , text
     , time
     , transformers
+    , unicode-show
     , unordered-containers
     , vector
   default-language: Haskell2010
@@ -172,8 +180,10 @@ test-suite numerics-test
       Paths_alpha_numerics
   hs-source-dirs:
       test
-  default-extensions: AllowAmbiguousTypes BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
+  default-extensions: AllowAmbiguousTypes BangPatterns BinaryLiterals BlockArguments ConstraintKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveGeneric DeriveTraversable DerivingVia DuplicateRecordFields FunctionalDependencies FlexibleInstances FlexibleContexts GADTs GeneralizedNewtypeDeriving HexFloatLiterals ImplicitParams InstanceSigs KindSignatures LambdaCase LiberalTypeSynonyms MonadComprehensions MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedLabels OverloadedStrings ParallelListComp PatternSynonyms PolyKinds PostfixOperators QuasiQuotes RankNTypes RecursiveDo RoleAnnotations ScopedTypeVariables StandaloneDeriving TransformListComp TupleSections TypeApplications TypeInType TypeFamilies TypeFamilyDependencies TypeOperators TypeSynonymInstances ViewPatterns UnicodeSyntax
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  extra-libraries:
+      libopenblas
   build-depends:
       adjunctions
     , aeson
@@ -181,6 +191,7 @@ test-suite numerics-test
     , alpha
     , alpha-numerics
     , ansi-terminal
+    , arithmoi
     , array
     , base
     , bifunctors
@@ -203,6 +214,7 @@ test-suite numerics-test
     , intervals
     , keys
     , lattices
+    , matrix
     , mtl
     , multiset
     , network
@@ -210,9 +222,11 @@ test-suite numerics-test
     , parsec
     , primitive
     , process
+    , profunctors
     , range
     , repa
     , repa-algorithms
+    , scientific
     , semigroupoids
     , semigroups
     , stm
@@ -222,6 +236,7 @@ test-suite numerics-test
     , text
     , time
     , transformers
+    , unicode-show
     , unordered-containers
     , vector
   default-language: Haskell2010

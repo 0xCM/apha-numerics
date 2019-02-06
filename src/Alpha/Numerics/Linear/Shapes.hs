@@ -27,7 +27,6 @@ newtype DimIx = DimIx Int
     deriving(Eq,Generic,Show,Num,Ord,ToInt)
 instance Newtype (DimIx)
 
-
 rowdef i = Repa.Any :. i :. Repa.All
 
 coldef i = Repa.Any :. i 
@@ -59,7 +58,6 @@ entrynum::DIM2 -> (DimNum,DimNum)
 entrynum d = (colnum d, rownum d)
 {-# INLINE entrynum #-}
 
-
 -- Given two locations in a matrix (left,top) and (right, bottom), 
 -- calculates the dimensional range that identifies the data in 
 -- a corresponding 2D array
@@ -69,14 +67,13 @@ region (r1,c1) (r2, c2)
 
 natregion::forall r1 c1 r2 c2. KnownNatQuad r1 c1 r2 c2 => Region
 natregion = region (nat2 @r1 @c1) (nat2 @r2 @c2) where
-type instance Dimension Int = Z :. Int
     
 instance Dimensional Int where
+    type Dimension Int = Z :. Int
     dimension i = Z :. i
     {-# INLINE dimension #-}
 
-type instance Dimension (Int,Int) = Z :. Int :. Int
-
 instance Dimensional (Int,Int) where
+    type Dimension (Int,Int) = Z :. Int :. Int
     dimension (i,j) = Z :. i :. j
     {-# INLINE dimension #-}

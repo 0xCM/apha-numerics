@@ -12,6 +12,7 @@ extra-source-files:
 
 default-extensions:
   AllowAmbiguousTypes
+  BangPatterns
   BinaryLiterals
   BlockArguments
   ConstraintKinds
@@ -20,6 +21,7 @@ default-extensions:
   DeriveFoldable
   DeriveGeneric
   DeriveTraversable
+  DerivingVia
   DuplicateRecordFields
   FunctionalDependencies
   FlexibleInstances
@@ -41,6 +43,7 @@ default-extensions:
   ParallelListComp
   PatternSynonyms
   PolyKinds
+  PostfixOperators
   QuasiQuotes
   RankNTypes
   RecursiveDo
@@ -57,7 +60,6 @@ default-extensions:
   TypeSynonymInstances
   ViewPatterns
   UnicodeSyntax
-
 
 dependencies:
 - array
@@ -85,6 +87,7 @@ dependencies:
 - aeson
 - aeson-pretty
 - ansi-terminal
+- arithmoi
 - bifunctors
 - comonad
 - contravariant
@@ -96,19 +99,26 @@ dependencies:
 - intervals
 - keys
 - lattices
+- matrix
 - multiset
 - network
 - primitive
+- profunctors
 - range
+- scientific
 - semigroupoids
 - semigroups
 - streams
 - tagged
 - unordered-containers
 - vector
+- unicode-show
 - alpha
 - repa
 - repa-algorithms
+
+extra-libraries: libopenblas
+
 
 library:
   source-dirs: src

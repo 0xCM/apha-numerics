@@ -7,7 +7,7 @@ import qualified Alpha.Structures as Struct
 
 default(Natural,Double,Text) 
 
-instance Example "pr-1" where
-    example = do
-        let factors = factor 581
-        print factors
+-- instance Example "pr-1" where
+--     example = do
+--         let factors = factor 581
+--         print (show factors)

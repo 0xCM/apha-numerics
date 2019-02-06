@@ -1,3 +1,5 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE PolyKinds #-}
 module Alpha.Numerics.Linear.Adapters
 (
     Array1D(..), Array2D(..), ArrayComp(..), ArrayEval(..),    
@@ -15,7 +17,7 @@ import qualified Data.Array.Repa.Algorithms.Matrix as Repa
 
 import Alpha.Numerics.Linear.Shapes
 
-type instance Element (Array r s a) = a
+type instance Individual (Array r s a) = a
 
 -- Alias for a 1D array
 type Array1D r a = Array r DIM1 a
@@ -50,15 +52,15 @@ subtable (Region (rc1 , rc2)) arr =  Repa.extract rc1 rc2 arr
 --     type Element (Array r s a) = a
 
     
-instance (Shape s, ArraySource r a, LeftScalar k a) => LeftScalar k (Array r s a) where 
-    type LeftScaled k (Array r s a) = ArrayComp s (LeftScaled k a)
-    scaleL k arr = Repa.map (\e -> k *. e  ) arr
-    {-# INLINE scaleL #-}
+-- instance (Shape s, ArraySource r a, LeftAction k a) => LeftAction k (Array r s a) where 
+--     --type LeftScaled k (Array r s a) = ArrayComp s (LeftScaled k a)
+--     k *. arr = Repa.map (\e -> k *. e  ) arr
+--     {-# INLINE (*.) #-}
     
-instance (Shape s, ArraySource r a, RightScalar a k) => RightScalar (Array r s a) k where 
-    type RightScaled (Array r s a) k = ArrayComp s (RightScaled a k)
-    scaleR arr k = Repa.map (\e -> e .* k  ) arr
-    {-# INLINE scaleR #-}
+-- instance (Shape s, ArraySource r a, RightAction a k) => RightAction (Array r s a) k where 
+--     --type RightScaled (Array r s a) k = ArrayComp s (RightScaled a k)
+--     arr .* k = Repa.map (\e -> e .* k  ) arr
+--     {-# INLINE (.*) #-}
 
 instance (Shape s, ArraySource r a, Ring a) => Accumulator (Array r s a) where
     type Accumulation (Array r s a) = a
@@ -78,9 +80,12 @@ instance (Shape s, ArraySource r a) => IMappable (Array r s a) a b where
         tr = Repa.traverse arr id eval
     {-# INLINE mapi #-}        
 
-instance (ArraySource r a) => Indexed (Array r DIM1 a) Int where
-    at arr i = arr Repa.! (Z :. i)
-    {-# INLINE at #-}
+--type instance IndexedElement s (Array r s a) = a
+    
+instance (ArraySource r a) => Indexable (Array r DIM1 a) where
+    type Indexer (Array r DIM1 a) = Int
+    idx arr i = arr Repa.! (Z :. i)
+    {-# INLINE idx #-}
 
 type instance Negated (Array r s a) = ArrayComp s (Negated a)
     

@@ -1,7 +1,13 @@
-resolver: nightly-2018-12-11
+resolver: lts-13.3
 
 packages:
 - .
 
 extra-deps:
 - ../alpha
+
+extra-lib-dirs:
+- ../foreigner/installed/lib
+
+extra-include-dirs:
+- ../foreigner/installed/include

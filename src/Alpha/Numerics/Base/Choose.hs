@@ -79,7 +79,7 @@ implementation.
 --    <http://www.jstor.org/stable/2323099>,
 --    <http://dl.acm.org/citation.cfm?id=26272>
 --
-choose :: (IntegralNumeric a) => a -> a -> a
+choose :: (IntegralNumeric a, OrdNum a) => a -> a -> a
     -- The result type could be any (Num b) if desired.
 {-# SPECIALIZE choose::Integer -> Integer -> Integer, Int -> Int -> Int #-}
 n `choose` k_
@@ -154,9 +154,9 @@ primes = seive wheels primes primeSquares
                 , s <= 2 || noFactorIn ps qs n' ]
         ++ seive ws (tail ps) (tail qs)
         where
-        -- noFactorIn :: [Int] -> [Int] -> Int -> Bool
-        noFactorIn (p:ps) (q:qs) x =
-            q > x || x `mod` p > 0 && noFactorIn ps qs x
+            noFactorIn :: [Int] -> [Int] -> Int -> Bool
+            noFactorIn (p:ps) (q:qs) x =
+                q > x || x `mod` p > 0 && noFactorIn ps qs x
 
 ----------------------------------------------------------------
 ----------------------------------------------------------- fin.

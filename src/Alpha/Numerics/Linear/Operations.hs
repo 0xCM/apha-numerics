@@ -34,9 +34,9 @@ import qualified Data.Array.Repa.Index as Repa
 
 default(Int,Double)    
 
-type instance Element (Matrix r m n a) = a
-type instance Element (DataTable r a) = a
-type instance Element (ElementFunc a) = a
+type instance Individual (Matrix r m n a) = a
+type instance Individual (DataTable r a) = a
+type instance Individual (ElementFunc a) = a
 
 type instance Multiplied (Matrix r1 m n a) (Matrix r2 n p a) = MatrixComp m p a    
 type instance Multiplied (Covector r n a) (Vector r n a) = a
@@ -115,7 +115,7 @@ submatrix (Matrix arr) = Matrix $ subtable r arr
 
 -- | Produces a table computation from a source vector
 vtable::(Int,Int) -> V.Vector a -> TableComp a
-vtable (r,c) src =  DataTable $ Repa.fromFunction dim (\i -> src ! int (rowidx i) ) 
+vtable (r,c) src =  DataTable $ Repa.fromFunction dim (\i -> src !! int (rowidx i) ) 
     where dim = Z :. r :. c
 {-# INLINE vtable #-}
 
@@ -227,20 +227,21 @@ instance (ArraySource r a, Binegatable a) => Binegatable (Matrix r m n a) where
     binegate (Matrix arr) = Matrix $ binegate arr 
     {-# INLINE binegate #-}
 
-instance (ArraySource r a) => Indexed (Matrix r m n a) (Int,Int) where    
-    at (Matrix arr) (i,j) = arr Repa.! dimension (i,j)
-    {-# INLINE at #-}
+instance (ArraySource r a) => Indexable (Matrix r m n a) where    
+    type Indexer (Matrix r m n a) = (Int,Int)
+    idx (Matrix arr) (i,j) = arr Repa.! dimension (i,j)
+    {-# INLINE idx #-}
     
 instance (ArraySource r a, Ring a) => Bimultiplicative (DataSlice r a) (DataSlice r a) where    
     bimul (DataSlice v1) (DataSlice v2)  = accumulate $ zip (*) v1 v2
     
-instance forall r m n k a. (ArraySource r a, LeftScalar k a) => LeftScalar k (Matrix r m n a) where
-    type LeftScaled k (Matrix r m n a) = MatrixComp m n (LeftScaled k a)
-    scaleL k (Matrix arr) = Matrix $ scaleL k arr
+-- instance forall r m n k a. (ArraySource r a, LeftScalar k a) => LeftScalar k (Matrix r m n a) where
+--     type LeftScaled k (Matrix r m n a) = MatrixComp m n (LeftScaled k a)
+--     scaleL k (Matrix arr) = Matrix $ scaleL k arr
 
-instance forall r m n k a. (ArraySource r a, RightScalar a k) => RightScalar (Matrix r m n a) k where
-    type RightScaled (Matrix r m n a) k = MatrixComp m n (RightScaled a k)
-    scaleR (Matrix arr) k = Matrix $ scaleR arr k        
+-- instance forall r m n k a. (ArraySource r a, RightScalar a k) => RightScalar (Matrix r m n a) k where
+--     type RightScaled (Matrix r m n a) k = MatrixComp m n (RightScaled a k)
+--     scaleR (Matrix arr) k = Matrix $ scaleR arr k        
 
 deriving instance (Show a, Unbox a) => Show (TableEval a)
 deriving instance (Show a, Unbox a) => Show (SliceEval a)
@@ -249,13 +250,14 @@ instance forall m n a. (Show a, Unbox a) => Show (MatrixEval m n a) where
     show(Matrix arr) = show arr
     
 instance (ArraySource r a) => Computable (Matrix r m n a) where
-    type Computation (Matrix r m n a) = MatrixComp m n a
+    type Computed (Matrix r m n a) = MatrixComp m n a
     compute (Matrix arr) = Matrix $ Repa.delay arr
     {-# INLINE compute #-}
     
-instance (ArraySource r a) => Indexed (DataTable r a) (Int,Int) where
-    at (DataTable arr) (i,j) = arr Repa.! (Z :. i :. j)
-    {-# INLINE at #-}
+instance (ArraySource r a) => Indexable (DataTable r a) where
+    type Indexer (DataTable r a) = (Int,Int)
+    idx (DataTable arr) (i,j) = arr Repa.! (Z :. i :. j)
+    {-# INLINE idx #-}
         
 instance (Load r DIM1 a, Unbox a) => Evaluatable (DataSlice r a) where
     type Evaluated (DataSlice r a) = SliceEval a
